@@ -2,13 +2,17 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.permissions import require_admin
 from app import models, schemas
 
 router = APIRouter(prefix="/classes", tags=["Classes"])
 
 @router.get("/", response_model=list[schemas.ClassResponse])
-def get_classes(db: Session = Depends(get_db)):
-    return db.query(models.Class).all()
+def get_classes(class_type: str | None = None, db: Session = Depends(get_db)):
+    classes = db.query(models.Class)
+    if class_type is not None:
+        classes = query.filter(models.Class.name.ilike(f"%{class_type}%"))
+    return classes
 
 @router.get("/{class_id}", response_model=schemas.ClassResponse)
 def get_class(class_id: int, db: Session = Depends(get_db)):
@@ -17,8 +21,8 @@ def get_class(class_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Class not found")
     return class_
 
-@router.post("/", response_model=schemas.ClassResponse)
-def create_class(class_data: schemas.ClassCreate, db: Session = Depends(get_db)):
+@router.post("/", response_model=schemas.ClassResponse, dependencies=[Depends(require_admin)])
+def create_class(class_data: schemas.ClassCreate, user_id: int, db: Session = Depends(get_db)):
     new_class = models.Class(**class_data.model_dump())
     db.add(new_class)
     db.commit()
@@ -37,8 +41,8 @@ def update_class(class_id: int, class_data: schemas.ClassUpdate, db: Session = D
     db.refresh(class_)
     return class_
 
-@router.delete("/{class_id}")
-def delete_class(class_id: int, db: Session = Depends(get_db)):
+@router.delete("/{class_id}", dependencies=[Depends(require_admin)])
+def delete_class(class_id: int, db: Session = Depends(get_db), ):
     class_ = db.query(models.Class).filter(models.Class.id == class_id).first()
     if not class_:
         raise HTTPException(status_code=404, detail="Class not found")

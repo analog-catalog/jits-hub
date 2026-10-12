@@ -7,3 +7,5 @@ python-dotenv
 pydantic[email]
 pwdlib[argon2]
 PyJWT
+pytest
+httpx
