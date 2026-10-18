@@ -37,7 +37,7 @@ def delete_booking(class_id: int, user_id: int, db: Session = Depends(get_db)):
     return {"message" : "booking deleted"}
 @router.get("/users/{user_id}/bookings", response_model=list[schemas.ClassResponse])
 def get_user_bookings(user_id: int, db: Session = Depends(get_db)):
-    bookings = db.query(models.Class).join(models.Booking, models.Booking.class_id == models.Class.id).filter(models.Booking.user_id == user_id).all()
-    return bookings
+    bookings = db.query(models.Class).join(models.Booking, models.Booking.class_id == models.Class.id).filter(models.Booking.user_id == user_id)
+    return bookings.all()
 
 
