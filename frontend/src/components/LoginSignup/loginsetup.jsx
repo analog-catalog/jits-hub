@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import '../../App.css';
 
 function Login() {
@@ -20,7 +21,7 @@ function Login() {
             })
             const result = await response.json();
             if (!response.ok) {
-                throw new Error ('Login failed. Status code: ${result.detail}')
+                throw new Error (`Login failed. Status code: ${result.detail}`)
             }
             console.log("Success: ", result)
         } catch (error) {
@@ -53,6 +54,9 @@ function Login() {
 
             <button type="submit">Login</button>
         </div>
+        <p>
+            Don't have an account?<Link to="/register"><button>Signup</button></Link>
+        </p>
         </form>
     )
 }
