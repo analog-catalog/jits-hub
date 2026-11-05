@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import '../../App.css';
+import { useNavigate, Link } from 'react-router-dom'
+import './Login.css';
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
+    const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
@@ -24,17 +24,19 @@ function Login() {
                 throw new Error (`Login failed. Status code: ${result.detail}`)
             }
             console.log("Success: ", result)
+            navigate("/home")
         } catch (error) {
             console.log("Error sending data. ", error)
         }
     }
     return (
-        <form onSubmit={handleSubmit}>
+        <div className="loginPage">
+        <h1 className="logo">JitsHub</h1>
+        <form className="loginBox" onSubmit={handleSubmit}>
         <div>
-            <h1>JitsHub</h1>
 
-            <h2>Login</h2>
-            <div>
+            <h2 className="loginHeader">Login</h2>
+            <div className="inputGroup">
                 <label>Email</label>
                 <input 
                     type="email" 
@@ -43,7 +45,7 @@ function Login() {
                     required/>
             </div>
 
-            <div>
+            <div className="inputGroup">
                 <label>Password</label>
                 <input 
                     type="password"
@@ -51,13 +53,13 @@ function Login() {
                     onChange={(e) => setPassword(e.target.value)} 
                     required/>
             </div>
-
-            <button type="submit">Login</button>
+                <button className="loginButton" type="submit">Login</button>
         </div>
         <p>
-            Don't have an account?<Link to="/register"><button>Signup</button></Link>
+            Don't have an account? <Link to="/register"><a>Create an account</a></Link>
         </p>
         </form>
+        </div>
     )
 }
 
